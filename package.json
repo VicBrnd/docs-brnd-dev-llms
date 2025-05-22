@@ -7,7 +7,6 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "fumadocs generate",
     "vercel:debug": "ls -l .source && ls -l .source/index.ts"
   },
   "dependencies": {
