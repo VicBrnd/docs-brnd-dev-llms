@@ -1,0 +1,101 @@
+---
+title: Kitty Spy
+description: Steganography challenge.
+---
+
+## Overview
+
+> The file `ch16.jpg` appears to be a standard JPEG image, but it contains multiple hidden ZIP archives embedded within its binary data using steganographic techniques.
+
+### 🔧 Installing Binwalk (macOS)
+
+To analyze and extract the embedded archives, we'll use [binwalk](https://github.com/ReFirmLabs/binwalk), a tool designed for reverse engineering firmware and binary files.
+
+Install it using Homebrew:
+
+```bash
+brew install binwalk
+```
+
+### 🫠 Extracting Hidden Data
+
+Run `binwalk` with the `--extract` flag to automatically identify and extract embedded files from `ch16.jpg`:
+
+```bash
+binwalk --extract ch16.jpg
+```
+
+### 📋 Output
+
+```bash
+-------------------------------------------------------------------------------------------------------------------------------------
+DECIMAL        HEXADECIMAL      DESCRIPTION
+-------------------------------------------------------------------------------------------------------------------------------------
+0              0x0              JPEG image, total size: 7265 bytes
+7265           0x1C61           ZIP archive, file count: 3, total size: 675116 bytes
+682381         0xA698D          ZIP archive, file count: 3, total size: 6656 bytes
+689037         0xA838D          ZIP archive, file count: 123, total size: 116247 bytes
+805284         0xC49A4          ZIP archive, file count: 3, total size: 3548426 bytes
+-------------------------------------------------------------------------------------------------------------------------------------
+
+[#] Extraction of JPEG data at offset 0x0 declined
+[+] Extraction of ZIP data at offset 0x1C61 completed successfully
+[+] Extraction of ZIP data at offset 0xA698D completed successfully
+[+] Extraction of ZIP data at offset 0xA838D completed successfully
+[+] Extraction of ZIP data at offset 0xC49A4 completed successfully
+```
+
+### 📁 Extracted File Structure
+
+<Files>
+  <Folder name="1C61" defaultOpen>
+    <Folder name="step1.zip">
+      <File
+        className="!text-fd-primary !bg-fd-primary/10"
+        name="README#1.txt"
+      />
+      <File name="route.png" />
+    </Folder>
+  </Folder>
+  <Folder name="A698D" defaultOpen>
+    <Folder name="step2.zip (Lock)" className="opacity-50" disabled />
+  </Folder>
+  <Folder name="A838D" defaultOpen>
+    <Folder name="step3.zip (Lock)" className="opacity-50" disabled />
+  </Folder>
+  <Folder name="C49A4" defaultOpen>
+    <Folder name="step4.zip (Lock)" className="opacity-50" disabled />
+  </Folder>
+</Files>
+
+---
+
+## 🥨 Step 1
+
+> The archive `step1.zip` is not password protected.
+
+### 📁 Contents of `step1.zip`
+
+<Files>
+  <Folder name="step1.zip" defaultOpen>
+    <File className="!text-fd-primary !bg-fd-primary/10" name="README#1.txt" />
+    <File name="route.png" />
+  </Folder>
+</Files>
+
+```txt title="README#1.txt"
+Something is hidden in this picture, I'm pretty sure of this... But what?
+```
+
+### 🕵️‍ Investigation
+
+Using **Photoshop's curve adjustment tool**, I enhanced the contrast of `route.png`.
+This revealed hidden text labels across a set of connected countries.
+
+Following the path in reverse order led to the discovery of the password:
+
+```text
+f1rstStepi5DoN3
+```
+
+This password was successfully used to extract `step2.zip`.
