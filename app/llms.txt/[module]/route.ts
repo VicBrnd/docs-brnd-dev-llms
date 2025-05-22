@@ -5,11 +5,10 @@ import { source } from "@/lib/source";
 
 export const revalidate = false;
 
-export async function GET(
-  _req: NextRequest,
-  { params }: { params: { module: string } }
-) {
-  const prefix = `/docs/${params.module}`;
+type Params = Promise<{ module: string }>;
+
+export async function GET(_req: NextRequest, { params }: { params: Params }) {
+  const prefix = `/docs/${(await params).module}`;
   const scan = source
     .getPages()
     .filter((page) => page.url === prefix || page.url.startsWith(prefix + "/"))
